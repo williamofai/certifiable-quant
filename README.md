@@ -1,7 +1,7 @@
 # certifiable-quant
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/williamofai/certifiable-quant)
-[![Tests](https://img.shields.io/badge/tests-7%2F7%20passing-brightgreen)](https://github.com/williamofai/certifiable-quant)
+[![Tests](https://img.shields.io/badge/tests-150%20passing-brightgreen)](https://github.com/williamofai/certifiable-quant)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 [![MISRA Compliance](https://img.shields.io/badge/MISRA--C-2012-blue)](docs/misra-compliance.md)
 
@@ -200,15 +200,15 @@ typedef struct {
 
 | Module | Tests | Coverage |
 |--------|-------|----------|
-| DVM Primitives | 8 | Arithmetic, bit identity |
 | Analyze | 30 | Overflow proofs, range propagation, norms |
+| Bit Identity | 9 | RNE patterns, SHA-256 vectors, cross-platform |
 | Calibrate | 28 | Statistics, coverage, degenerate handling |
-| Convert | 12 | Quantization, BatchNorm folding |
-| Verify | 22 | Bound checking, contract validation |
-| Certificate | 26 | Builder, Merkle, serialization |
-| Bit Identity | 8 | Cross-platform verification |
+| Certificate | 27 | Builder, Merkle, serialization, roundtrip |
+| Convert | 21 | RNE quantization, BatchNorm folding, dyadic |
+| Primitives | 13 | Arithmetic, saturation, overflow safety |
+| Verify | 22 | Bound checking, L∞ norm, contract validation |
 
-**Total: 134 tests**
+**Total: 150 tests**
 
 ## Documentation
 
