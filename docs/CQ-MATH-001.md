@@ -93,12 +93,12 @@ Where ⌊·⌉ denotes round-to-nearest-even (RNE).
 ```c
 int32_t cq_round_rne(int64_t x, uint32_t shift) {
     if (shift == 0) return cq_clamp32(x);
-    
+
     int64_t half = 1LL << (shift - 1);
     int64_t mask = (1LL << shift) - 1;
     int64_t frac = x & mask;
     int64_t quot = x >> shift;  /* Arithmetic shift */
-    
+
     int64_t result;
     if (frac < half) {
         result = quot;
@@ -107,7 +107,7 @@ int32_t cq_round_rne(int64_t x, uint32_t shift) {
     } else {  /* Exactly halfway — round to even */
         result = quot + (quot & 1);
     }
-    
+
     return cq_clamp32(result);
 }
 ```

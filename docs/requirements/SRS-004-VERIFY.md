@@ -81,18 +81,18 @@ int cq_verify_dual_inference(const cq_model_fp32_t *model_fp,
                              const float *input,
                              cq_verify_sample_t *result) {
     // FP32 forward pass with intermediate capture
-    cq_fp32_forward_with_capture(model_fp, input, 
+    cq_fp32_forward_with_capture(model_fp, input,
                                   result->fp_intermediates,
                                   &result->fp_output);
-    
+
     // Quantized forward pass with intermediate capture
     cq_q16_forward_with_capture(model_q, input,
                                  result->q_intermediates,
                                  &result->q_output);
-    
+
     // Compute deviations
     cq_compute_deviations(result);
-    
+
     return 0;
 }
 ```
@@ -439,7 +439,7 @@ The Verification module closes the mathematical loop established in Analysis:
        │                                       │
        └───────────────────────────────────────┘
                  Falsification Feedback
-                 
+
 If measured > theoretical:
   - Theory is FALSIFIED
   - Root cause analysis required

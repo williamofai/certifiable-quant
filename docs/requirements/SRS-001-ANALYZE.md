@@ -172,21 +172,21 @@ void cq_compute_layer_error(cq_layer_contract_t *layer,
                             const cq_layer_contract_t *prev,
                             const cq_tensor_spec_t *specs) {
     // Input error from previous layer (or entry error for layer 0)
-    layer->input_error_bound = (prev != NULL) ? prev->output_error_bound 
+    layer->input_error_bound = (prev != NULL) ? prev->output_error_bound
                                                : ctx->entry_error;
-    
+
     // Static error terms
     double S_w = (double)(1 << specs->weight_spec.scale_exp);
     double S_out = (double)(1 << specs->output_spec.scale_exp);
-    
+
     layer->weight_error_contrib = (0.5 / S_w) * layer->max_input_norm;
     layer->bias_error_contrib = 0.5 / (S_w * layer->max_input_scale);
     layer->projection_error = 0.5 / S_out;
-    
+
     layer->local_error_sum = layer->weight_error_contrib +
                              layer->bias_error_contrib +
                              layer->projection_error;
-    
+
     // Recurrence
     layer->output_error_bound = layer->amp_factor * layer->input_error_bound +
                                 layer->local_error_sum;

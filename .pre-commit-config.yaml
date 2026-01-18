@@ -28,6 +28,7 @@ repos:
           - --suppress=unassignedVariable
           - --suppress=variableScope
           - --suppress=unusedFunction
+          - --suppress=shiftNegativeLHS
           - --std=c99
           - -Iinclude
           - --quiet

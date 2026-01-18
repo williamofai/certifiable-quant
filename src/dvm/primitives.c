@@ -72,11 +72,11 @@ int32_t cq_round_shift_rne(int64_t x, uint32_t shift, cq_fault_flags_t *faults)
 
     int64_t divisor = (int64_t)1 << shift;
     int64_t half = divisor / 2;
-    
+
     /* Use integer division for correct truncation toward zero */
     int64_t quot = x / divisor;
     int64_t remainder = x % divisor;
-    
+
     /* RNE rounding logic */
     if (remainder > half) {
         /* Above halfway: round up (away from zero for positive) */
@@ -156,7 +156,7 @@ bool cq_overflow_is_safe(const cq_overflow_proof_t *proof)
     if (proof->dot_product_len == 0) {
         return true;
     }
-    
+
     uint64_t product = (uint64_t)proof->dot_product_len *
                        (uint64_t)proof->max_weight_mag *
                        (uint64_t)proof->max_input_mag;

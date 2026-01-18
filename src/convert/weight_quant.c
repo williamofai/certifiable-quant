@@ -17,8 +17,8 @@
  * FR-CNV-01: Quantization Kernel (RNE)
  * ============================================================================ */
 
-cq_fixed16_t cq_quantize_weight_rne(float w_fp, 
-                                    double scale, 
+cq_fixed16_t cq_quantize_weight_rne(float w_fp,
+                                    double scale,
                                     cq_fault_flags_t *faults)
 {
     /* Scale to fixed-point domain using FP64 */
@@ -27,7 +27,7 @@ cq_fixed16_t cq_quantize_weight_rne(float w_fp,
     /* C99 round() uses ties-away-from-zero; correct to RNE */
     double r = round(scaled);
     double diff = r - scaled;
-    
+
     if (fabs(diff) == 0.5) {
         int64_t i = (int64_t)r;
         if (i % 2 != 0) {
@@ -56,7 +56,7 @@ cq_fixed16_t cq_quantize_weight_rne(float w_fp,
 int cq_verify_symmetric(const cq_tensor_spec_t *spec, cq_fault_flags_t *faults)
 {
     if (!spec) return CQ_ERROR_NULL_POINTER;
-    
+
     if (!spec->is_symmetric) {
         if (faults) faults->asymmetric = 1;
         return CQ_FAULT_ASYMMETRIC_PARAMS;
@@ -71,27 +71,27 @@ int cq_verify_symmetric(const cq_tensor_spec_t *spec, cq_fault_flags_t *faults)
 int cq_verify_constraints(cq_layer_header_t *hdr, cq_fault_flags_t *faults)
 {
     if (!hdr) return CQ_ERROR_NULL_POINTER;
-    
+
     int ret;
-    
+
     ret = cq_verify_symmetric(&hdr->weight_spec, faults);
     if (ret != 0) return ret;
-    
+
     ret = cq_verify_symmetric(&hdr->input_spec, faults);
     if (ret != 0) return ret;
-    
+
     ret = cq_verify_symmetric(&hdr->bias_spec, faults);
     if (ret != 0) return ret;
 
     /* Check: bias_exp == weight_exp + input_exp */
-    int expected = (int)hdr->weight_spec.scale_exp + 
+    int expected = (int)hdr->weight_spec.scale_exp +
                    (int)hdr->input_spec.scale_exp;
-    
+
     if ((int)hdr->bias_spec.scale_exp != expected) {
         hdr->dyadic_valid = false;
         return CQ_ERROR_DYADIC_VIOLATION;
     }
-    
+
     hdr->dyadic_valid = true;
     return 0;
 }

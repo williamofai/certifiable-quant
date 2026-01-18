@@ -150,7 +150,7 @@ void cq_compute_merkle_root(const cq_certificate_t *cert,
     // Serialise sections 1-6 to contiguous buffer
     uint8_t buffer[264];
     size_t offset = 0;
-    
+
     // Section 1: Metadata
     memcpy(buffer + offset, cert->magic, 4);
     offset += 4;
@@ -158,13 +158,13 @@ void cq_compute_merkle_root(const cq_certificate_t *cert,
     offset += 4;
     cq_write_u64_le(buffer + offset, cert->timestamp);
     offset += 8;
-    
+
     // Section 2: Scope
     buffer[offset++] = cert->scope_symmetric_only;
     buffer[offset++] = cert->scope_format;
     memset(buffer + offset, 0, 6);  // Reserved
     offset += 6;
-    
+
     // Section 3: Source identity
     memcpy(buffer + offset, cert->source_model_hash, 32);
     offset += 32;
@@ -173,7 +173,7 @@ void cq_compute_merkle_root(const cq_certificate_t *cert,
     buffer[offset++] = cert->bn_folding_status;
     memset(buffer + offset, 0, 7);  // Reserved
     offset += 7;
-    
+
     // Section 4: Mathematical core
     memcpy(buffer + offset, cert->analysis_digest, 32);
     offset += 32;
@@ -181,7 +181,7 @@ void cq_compute_merkle_root(const cq_certificate_t *cert,
     offset += 32;
     memcpy(buffer + offset, cert->verification_digest, 32);
     offset += 32;
-    
+
     // Section 5: Claims
     cq_write_f64_le(buffer + offset, cert->epsilon_0_claimed);
     offset += 8;
@@ -191,7 +191,7 @@ void cq_compute_merkle_root(const cq_certificate_t *cert,
     offset += 8;
     memset(buffer + offset, 0, 8);  // Reserved
     offset += 8;
-    
+
     // Section 6: Target identity
     memcpy(buffer + offset, cert->target_model_hash, 32);
     offset += 32;
@@ -199,7 +199,7 @@ void cq_compute_merkle_root(const cq_certificate_t *cert,
     offset += 4;
     cq_write_u32_le(buffer + offset, cert->target_layer_count);
     offset += 4;
-    
+
     // Compute SHA-256
     cq_sha256(buffer, offset, out_hash);
 }
@@ -235,7 +235,7 @@ int cq_certificate_sign(cq_certificate_t *cert,
         memset(cert->signature, 0, 64);
         return 0;  // Unsigned certificate
     }
-    
+
     // Sign the merkle root
     return ed25519_sign(cert->signature,
                         cert->merkle_root, 32,
@@ -297,50 +297,50 @@ int cq_certificate_assemble(cq_certificate_t *cert,
         faults->bound_violation = 1;
         return CQ_ERROR_VERIFICATION_FAILED;
     }
-    
+
     // Zero the certificate first
     memset(cert, 0, sizeof(*cert));
-    
+
     // Metadata
     memcpy(cert->magic, CQ_CERTIFICATE_MAGIC, 4);
     cq_get_tool_version(cert->version);
     cert->timestamp = cq_utc_timestamp();
-    
+
     // Scope
     cert->scope_symmetric_only = 0x01;
     cert->scope_format = CQ_FORMAT_Q16_16;
-    
+
     // Source identity
     memcpy(cert->source_model_hash, model->source_model_hash, 32);
     // ... (BN folding from conversion)
-    
+
     // Mathematical core (hash the digests)
     cq_analysis_digest_t a_digest;
     cq_calibration_digest_t c_digest;
     cq_verification_digest_t v_digest;
-    
+
     cq_analysis_digest_generate(analysis, &a_digest);
     cq_sha256(&a_digest, sizeof(a_digest), cert->analysis_digest);
-    
+
     cq_calibration_digest_generate(calibration, &c_digest);
     cq_sha256(&c_digest, sizeof(c_digest), cert->calibration_digest);
-    
+
     cq_verification_digest_generate(verification, &v_digest);
     cq_sha256(&v_digest, sizeof(v_digest), cert->verification_digest);
-    
+
     // Claims
     cert->epsilon_0_claimed = analysis->entry_error;
     cert->epsilon_total_claimed = analysis->total_error_bound;
     cert->epsilon_max_measured = verification->total_error_max_measured;
-    
+
     // Target identity
     memcpy(cert->target_model_hash, model->quantized_hash, 32);
     cert->target_param_count = model->total_params;
     cert->target_layer_count = model->layer_count;
-    
+
     // Compute Merkle root
     cq_compute_merkle_root(cert, cert->merkle_root);
-    
+
     return 0;
 }
 ```
@@ -398,9 +398,9 @@ int cq_certificate_verify(const cq_certificate_t *cert,
     // 1. Merkle root verification
     uint8_t computed_root[32];
     cq_compute_merkle_root(cert, computed_root);
-    result->merkle_valid = (memcmp(computed_root, 
+    result->merkle_valid = (memcmp(computed_root,
                                     cert->merkle_root, 32) == 0);
-    
+
     // 2. Signature verification (if applicable)
     if (public_key != NULL && !cq_is_zero(cert->signature, 64)) {
         result->signature_valid = ed25519_verify(
@@ -408,15 +408,15 @@ int cq_certificate_verify(const cq_certificate_t *cert,
     } else {
         result->signature_valid = true;  // No signature to verify
     }
-    
+
     // 3. Model binding
     result->model_binding_valid = (memcmp(cert->target_model_hash,
                                           model->quantized_hash, 32) == 0);
-    
+
     // 4. Bounds satisfaction
-    result->bounds_valid = (cert->epsilon_max_measured <= 
+    result->bounds_valid = (cert->epsilon_max_measured <=
                            cert->epsilon_total_claimed);
-    
+
     return (result->merkle_valid && result->signature_valid &&
             result->model_binding_valid && result->bounds_valid) ? 0 : -1;
 }

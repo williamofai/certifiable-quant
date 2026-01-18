@@ -348,7 +348,7 @@ TEST(test_global_coverage_varied)
     cq_calibration_report_t report;
 
     /* Coverage values: 0.5, 0.6, 0.7, 0.8, 0.9, 0.9, 0.9, 0.95, 0.95, 1.0 */
-    float coverages[] = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 0.9f, 0.9f, 0.95f, 0.95f, 1.0f};
+    const float coverages[] = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 0.9f, 0.9f, 0.95f, 0.95f, 1.0f};
 
     for (int i = 0; i < 10; i++) {
         cq_tensor_stats_init(&tensors[i], (uint32_t)i, 0, -1.0f, 1.0f);

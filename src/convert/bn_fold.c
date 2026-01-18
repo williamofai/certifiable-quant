@@ -17,16 +17,16 @@
 
 /* ============================================================================
  * FR-CNV-04: BatchNorm Folding
- * 
+ *
  * Mathematical derivation (CQ-MATH-001 §8.2):
  *   W' = W × γ / √(σ² + ε)
  *   b' = (b - μ) × γ / √(σ² + ε) + β
  * ============================================================================ */
 
-int cq_fold_batchnorm(const float *W, 
+int cq_fold_batchnorm(const float *W,
                       const float *b,
                       const cq_bn_params_t *bn,
-                      float *W_folded, 
+                      float *W_folded,
                       float *b_folded,
                       size_t weight_rows,
                       size_t weight_cols,
@@ -36,7 +36,7 @@ int cq_fold_batchnorm(const float *W,
     if (!W || !bn || !W_folded || !b_folded || !record) {
         return CQ_ERROR_NULL_POINTER;
     }
-    
+
     if (bn->channel_count != weight_rows) {
         return CQ_ERROR_DIMENSION_MISMATCH;
     }
@@ -56,7 +56,7 @@ int cq_fold_batchnorm(const float *W,
     /* 2. Perform folding (FP64 per IMPL-WATCH-03) */
     for (size_t i = 0; i < weight_rows; i++) {
         double var_eps = (double)bn->var[i] + (double)bn->epsilon;
-        
+
         if (var_eps <= 0.0) {
             if (faults) faults->div_zero = 1;
             return CQ_FAULT_DIV_ZERO;
@@ -65,7 +65,7 @@ int cq_fold_batchnorm(const float *W,
         double inv_std = 1.0 / sqrt(var_eps);
         double scale = (double)bn->gamma[i] * inv_std;
         double offset = (double)bn->beta[i] - ((double)bn->mean[i] * scale);
-        
+
         /* Fold bias */
         double old_b = b ? (double)b[i] : 0.0;
         b_folded[i] = (float)(old_b * scale + offset);
@@ -85,7 +85,7 @@ int cq_fold_batchnorm(const float *W,
         cq_sha256_update(&ctx, b_folded, weight_rows * sizeof(float));
         cq_sha256_final(&ctx, record->folded_weights_hash);
     }
-    
+
     record->folding_occurred = true;
     return 0;
 }

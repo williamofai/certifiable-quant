@@ -26,8 +26,8 @@ extern "C" {
 /**
  * @brief Quantize a single weight using RNE rounding.
  */
-cq_fixed16_t cq_quantize_weight_rne(float w_fp, 
-                                    double scale, 
+cq_fixed16_t cq_quantize_weight_rne(float w_fp,
+                                    double scale,
                                     cq_fault_flags_t *faults);
 
 /* ============================================================================
@@ -47,7 +47,7 @@ int cq_verify_symmetric(const cq_tensor_spec_t *spec,
 /**
  * @brief Verify dyadic constraint: S_bias == S_weight * S_input
  */
-int cq_verify_constraints(cq_layer_header_t *hdr, 
+int cq_verify_constraints(cq_layer_header_t *hdr,
                           cq_fault_flags_t *faults);
 
 /* ============================================================================
@@ -70,10 +70,10 @@ int cq_convert_weights(const float *w_fp,
 /**
  * @brief Fold BatchNorm into preceding linear/conv layer.
  */
-int cq_fold_batchnorm(const float *W, 
+int cq_fold_batchnorm(const float *W,
                       const float *b,
                       const cq_bn_params_t *bn,
-                      float *W_folded, 
+                      float *W_folded,
                       float *b_folded,
                       size_t weight_rows,
                       size_t weight_cols,

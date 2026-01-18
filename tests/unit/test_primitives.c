@@ -4,6 +4,8 @@
  * @brief Unit tests for DVM primitive operations.
  *
  * @traceability CQ-MATH-001 §2.3 (RNE Test Vectors)
+ * @author William Murray
+ * @copyright Copyright (c) 2026 The Murray Family Innovation Trust.
  */
 
 #include "dvm.h"

@@ -313,7 +313,7 @@ static inline void cq_fault_clear(cq_fault_flags_t *f) {
  * @param dst Destination fault flags (accumulated).
  * @param src Source fault flags to merge.
  */
-static inline void cq_fault_merge(cq_fault_flags_t *dst, 
+static inline void cq_fault_merge(cq_fault_flags_t *dst,
                                    const cq_fault_flags_t *src) {
     *((uint32_t *)dst) |= *((uint32_t *)src);
 }
@@ -400,23 +400,23 @@ typedef struct {
     /* Layer identification */
     uint32_t layer_index;           /**< Layer index in network (0-based) */
     uint32_t layer_type;            /**< Layer type enumeration */
-    
+
     /* Amplification factor */
     double amp_factor;              /**< A_l = ‖W_l‖ (operator norm) */
-    
+
     /* Error contributions (static terms) */
     double weight_error_contrib;    /**< ‖ΔW_l‖ · ‖x_l‖ */
     double bias_error_contrib;      /**< ‖Δb_l‖ */
     double projection_error;        /**< ε_proj,l (requantization) */
-    
+
     /* Computed bounds */
     double local_error_sum;         /**< Sum of static error terms */
     double input_error_bound;       /**< ε_l (from previous layer) */
     double output_error_bound;      /**< ε_{l+1} (computed) */
-    
+
     /* Overflow proof for this layer */
     cq_overflow_proof_t overflow_proof;
-    
+
     /* Validation */
     bool is_valid;                  /**< True if contract is complete */
     uint8_t _reserved[7];           /**< Padding to 8-byte alignment */
@@ -452,22 +452,22 @@ typedef struct {
     double entry_error;             /**< ε₀: Input ingress quantization error */
     cq_scale_exp_t input_scale_exp; /**< Exponent for input scale S_in */
     uint8_t _pad1[7];               /**< Padding */
-    
+
     /* Network structure */
     uint32_t layer_count;           /**< Number of layers */
     uint32_t _pad2;                 /**< Padding */
-    
+
     /* Per-layer contracts (caller-allocated) */
     cq_layer_contract_t *layers;    /**< Array of layer contracts [layer_count] */
-    
+
     /* Total error bound */
     double total_error_bound;       /**< ε_total: End-to-end bound */
-    
+
     /* Validation */
     bool is_complete;               /**< True if all layers analysed */
     bool is_valid;                  /**< True if no fatal errors */
     uint8_t _reserved[6];           /**< Padding to 8-byte alignment */
-    
+
     /* Accumulated faults */
     cq_fault_flags_t faults;        /**< Accumulated fault flags */
     uint32_t _pad3;                 /**< Padding */
@@ -508,24 +508,24 @@ typedef struct {
     /* Tensor identification */
     uint32_t tensor_id;             /**< Unique tensor identifier */
     uint32_t layer_index;           /**< Parent layer index */
-    
+
     /* Observed range (from calibration dataset) */
     float min_observed;             /**< L_obs: Minimum observed value */
     float max_observed;             /**< U_obs: Maximum observed value */
-    
+
     /* Claimed safe range (for scaling) */
     float min_safe;                 /**< L_safe: Claimed minimum */
     float max_safe;                 /**< U_safe: Claimed maximum */
-    
+
     /* Coverage metric */
     float coverage_ratio;           /**< C_t = observed_range / safe_range */
-    
+
     /* Degenerate detection (§5.3) */
     bool is_degenerate;             /**< True if |max - min| < ε_degenerate */
-    
+
     /* Range veto (§5.2) */
     bool range_veto;                /**< True if observed exceeds safe */
-    
+
     uint8_t _reserved[2];           /**< Padding to 8-byte alignment */
 } cq_tensor_stats_t;
 
@@ -589,21 +589,21 @@ typedef struct {
     uint8_t dataset_hash[32];       /**< SHA-256 of calibration dataset */
     uint32_t sample_count;          /**< Number of calibration samples */
     uint32_t tensor_count;          /**< Number of tensors calibrated */
-    
+
     /* Global coverage metrics */
     float global_coverage_min;      /**< C_min: Minimum across all tensors */
     float global_coverage_p10;      /**< C_p10: 10th percentile */
     float global_coverage_mean;     /**< Mean coverage */
     uint32_t _pad1;                 /**< Padding */
-    
+
     /* Veto status */
     bool range_veto_triggered;      /**< True if any L_obs < L_safe or U_obs > U_safe */
     bool coverage_veto_triggered;   /**< True if C_min < threshold */
     uint8_t _reserved[6];           /**< Padding */
-    
+
     /* Tensor statistics (caller-allocated) */
     cq_tensor_stats_t *tensors;     /**< Array of tensor stats [tensor_count] */
-    
+
     /* Accumulated faults */
     cq_fault_flags_t faults;        /**< Accumulated fault flags */
     uint32_t _pad2;                 /**< Padding */
@@ -644,10 +644,10 @@ typedef struct {
 typedef struct {
     /* Pre-fold BN parameters */
     uint8_t original_bn_hash[32];   /**< SHA-256 of (γ, β, μ, σ²) */
-    
+
     /* Post-fold weights */
     uint8_t folded_weights_hash[32]; /**< SHA-256 of (W', b') */
-    
+
     /* Metadata */
     uint32_t layer_index;           /**< Layer where BN was folded */
     bool folding_occurred;          /**< True if folding was performed */
@@ -701,23 +701,23 @@ typedef struct {
     /* Layer identification */
     uint32_t layer_index;           /**< Layer index (0-based) */
     uint32_t layer_type;            /**< cq_layer_type_t */
-    
+
     /* Tensor specifications */
     cq_tensor_spec_t weight_spec;   /**< Weight quantization spec */
     cq_tensor_spec_t input_spec;    /**< Input quantization spec */
     cq_tensor_spec_t bias_spec;     /**< Bias quantization spec */
     cq_tensor_spec_t output_spec;   /**< Output quantization spec */
-    
+
     /* Tensor dimensions */
     uint32_t weight_rows;           /**< Weight matrix rows */
     uint32_t weight_cols;           /**< Weight matrix columns */
     uint32_t bias_len;              /**< Bias vector length */
     uint32_t _pad;                  /**< Padding */
-    
+
     /* Data offsets (within model file) */
     uint64_t weight_offset;         /**< Byte offset to weight data */
     uint64_t bias_offset;           /**< Byte offset to bias data */
-    
+
     /* Dyadic constraint satisfaction */
     bool dyadic_valid;              /**< True if bias.scale == weight.scale + input.scale */
     uint8_t _reserved[7];           /**< Padding */
@@ -731,7 +731,7 @@ typedef struct {
  * @traceability CQ-MATH-001 §3.2
  */
 static inline bool cq_layer_dyadic_valid(const cq_layer_header_t *hdr) {
-    int expected_bias_exp = hdr->weight_spec.scale_exp + 
+    int expected_bias_exp = hdr->weight_spec.scale_exp +
                             hdr->input_spec.scale_exp;
     return hdr->bias_spec.scale_exp == expected_bias_exp;
 }
@@ -753,22 +753,22 @@ typedef struct {
     /* Magic and version */
     uint8_t magic[4];               /**< "CQ16" or "CQ24" */
     uint32_t version;               /**< Format version (1) */
-    
+
     /* Model identity */
     uint8_t source_model_hash[32];  /**< SHA-256 of source FP32 model */
     uint8_t quantized_hash[32];     /**< SHA-256 of quantized weights */
-    
+
     /* Structure */
     uint32_t layer_count;           /**< Number of layers */
     uint32_t total_params;          /**< Total parameter count */
     uint64_t total_size;            /**< Total file size in bytes */
-    
+
     /* Layer headers offset */
     uint64_t headers_offset;        /**< Byte offset to layer headers array */
-    
+
     /* Certificate reference */
     uint8_t certificate_hash[32];   /**< SHA-256 of associated certificate */
-    
+
     /* Padding */
     uint8_t _reserved[24];          /**< Reserved for future use */
 } cq_model_header_t;
@@ -797,15 +797,15 @@ typedef struct {
 typedef struct {
     uint32_t layer_index;           /**< Layer index */
     uint32_t sample_count;          /**< Number of samples compared */
-    
+
     /* Measured errors */
     double error_max_measured;      /**< Maximum measured error */
     double error_mean_measured;     /**< Mean measured error */
     double error_std_measured;      /**< Standard deviation */
-    
+
     /* Theoretical bound */
     double error_bound_theoretical; /**< ε_l from analysis */
-    
+
     /* Bound satisfaction */
     bool bound_satisfied;           /**< True if max_measured ≤ theoretical */
     uint8_t _reserved[7];           /**< Padding */
@@ -827,20 +827,20 @@ typedef struct {
     uint8_t verification_set_hash[32]; /**< SHA-256 of verification dataset */
     uint32_t sample_count;          /**< Number of verification samples */
     uint32_t layer_count;           /**< Number of layers verified */
-    
+
     /* End-to-end results */
     double total_error_theoretical; /**< ε_total from analysis */
     double total_error_max_measured;/**< Maximum measured end-to-end error */
     double total_error_mean;        /**< Mean end-to-end error */
-    
+
     /* Bound satisfaction */
     bool all_bounds_satisfied;      /**< True if all layers pass */
     bool total_bound_satisfied;     /**< True if total error passes */
     uint8_t _reserved[6];           /**< Padding */
-    
+
     /* Per-layer comparisons (caller-allocated) */
     cq_layer_comparison_t *layers;  /**< Array of comparisons [layer_count] */
-    
+
     /* Accumulated faults */
     cq_fault_flags_t faults;        /**< Accumulated fault flags */
     uint32_t _pad;                  /**< Padding */
@@ -885,38 +885,38 @@ typedef struct {
     uint8_t magic[4];               /**< "CQCR" (CQ Certificate) */
     uint8_t version[4];             /**< Tool version bytes */
     uint64_t timestamp;             /**< Unix timestamp (UTC) */
-    
+
     /* ========== 2. Scope Declaration (8 bytes) ========== */
     uint8_t scope_symmetric_only;   /**< 0x01 = symmetric only (§2.5) */
     uint8_t scope_format;           /**< 0x00 = Q16.16, 0x01 = Q8.24 */
     uint8_t _scope_reserved[6];     /**< Reserved */
-    
+
     /* ========== 3. Source Identity (72 bytes) ========== */
     uint8_t source_model_hash[32];  /**< SHA-256 of FP32 model */
     uint8_t bn_folding_hash[32];    /**< Hash of BN folding record */
     uint8_t bn_folding_status;      /**< 0x00 = no BN, 0x01 = folded */
     uint8_t _source_reserved[7];    /**< Reserved */
-    
+
     /* ========== 4. Mathematical Core (96 bytes) ========== */
     uint8_t analysis_digest[32];    /**< Hash of cq_analysis_digest_t */
     uint8_t calibration_digest[32]; /**< Hash of cq_calibration_digest_t */
     uint8_t verification_digest[32];/**< Hash of cq_verification_digest_t */
-    
+
     /* ========== 5. Claims (32 bytes) ========== */
     double epsilon_0_claimed;       /**< ε₀: Entry error */
     double epsilon_total_claimed;   /**< ε_total: Theoretical bound */
     double epsilon_max_measured;    /**< Maximum measured error */
     double _claims_reserved;        /**< Reserved */
-    
+
     /* ========== 6. Target Identity (40 bytes) ========== */
     uint8_t target_model_hash[32];  /**< SHA-256 of quantized model */
     uint32_t target_param_count;    /**< Total parameters */
     uint32_t target_layer_count;    /**< Number of layers */
-    
+
     /* ========== 7. Integrity (96 bytes) ========== */
     uint8_t merkle_root[32];        /**< SHA-256 of all above sections */
     uint8_t signature[64];          /**< Ed25519 signature (optional) */
-    
+
 } cq_certificate_t;
 
 #define CQ_CERTIFICATE_MAGIC    {'C', 'Q', 'C', 'R'}

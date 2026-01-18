@@ -63,19 +63,19 @@ typedef struct {
 typedef struct {
     uint32_t layer_index;           /**< Layer index */
     uint32_t sample_count;          /**< Number of samples compared */
-    
+
     /* Measured errors */
     double error_max_measured;      /**< Maximum measured error (L∞) */
     double error_mean_measured;     /**< Mean measured error */
     double error_std_measured;      /**< Standard deviation */
-    
+
     /* Theoretical bound (from analysis) */
     double error_bound_theoretical; /**< ε_l from analysis */
-    
+
     /* Running statistics (internal) */
     double error_sum;               /**< Sum for mean computation */
     double error_sum_sq;            /**< Sum of squares for std computation */
-    
+
     /* Bound satisfaction */
     bool bound_satisfied;           /**< True if max_measured ≤ theoretical */
     uint8_t _reserved[7];           /**< Padding */
@@ -95,25 +95,25 @@ typedef struct {
     uint8_t verification_set_hash[32]; /**< SHA-256 of verification dataset */
     uint32_t sample_count;          /**< Number of verification samples */
     uint32_t layer_count;           /**< Number of layers verified */
-    
+
     /* End-to-end results */
     double total_error_theoretical; /**< ε_total from analysis */
     double total_error_max_measured;/**< Maximum measured end-to-end error */
     double total_error_mean;        /**< Mean end-to-end error */
     double total_error_std;         /**< Std dev of end-to-end error */
-    
+
     /* Running statistics (internal) */
     double total_error_sum;         /**< Sum for mean computation */
     double total_error_sum_sq;      /**< Sum of squares for std */
-    
+
     /* Bound satisfaction */
     bool all_bounds_satisfied;      /**< True if all layers pass */
     bool total_bound_satisfied;     /**< True if total error passes */
     uint8_t _reserved[6];           /**< Padding */
-    
+
     /* Per-layer comparisons (caller-allocated) */
     cq_layer_comparison_t *layers;  /**< Array of comparisons [layer_count] */
-    
+
     /* Accumulated faults */
     cq_fault_flags_t faults;        /**< Accumulated fault flags */
     uint32_t _pad;                  /**< Padding */
@@ -139,7 +139,7 @@ typedef struct {
 
 /**
  * @brief Compute L-infinity (max absolute) norm of deviation.
- * 
+ *
  * @param a      First array (FP32 reference).
  * @param b      Second array (quantized, converted to float).
  * @param n      Array length.
@@ -151,7 +151,7 @@ double cq_linf_norm(const float *a, const float *b, size_t n);
 
 /**
  * @brief Compute L-infinity norm between float and fixed-point arrays.
- * 
+ *
  * @param fp     Float array (FP32 reference).
  * @param q16    Fixed-point array (Q16.16).
  * @param n      Array length.
@@ -167,7 +167,7 @@ double cq_linf_norm_q16(const float *fp, const cq_fixed16_t *q16, size_t n);
 
 /**
  * @brief Check if measured error satisfies theoretical bound.
- * 
+ *
  * @param layer   Layer comparison (updated with bound_satisfied).
  * @param faults  Output: Fault flags (bound_violation set if fails).
  * @return        0 if bound satisfied, CQ_FAULT_BOUND_VIOLATION if not.
@@ -179,7 +179,7 @@ int cq_verify_check_bounds(cq_layer_comparison_t *layer,
 
 /**
  * @brief Check all layer bounds and total bound.
- * 
+ *
  * @param report  Verification report (updated with satisfaction flags).
  * @param faults  Output: Accumulated fault flags.
  * @return        0 if all bounds satisfied, CQ_FAULT_BOUND_VIOLATION if any fail.
@@ -195,7 +195,7 @@ int cq_verify_check_all_bounds(cq_verification_report_t *report,
 
 /**
  * @brief Update layer statistics with a new error sample.
- * 
+ *
  * @param layer   Layer comparison to update.
  * @param error   Measured error for this sample.
  *
@@ -205,7 +205,7 @@ void cq_verify_layer_update(cq_layer_comparison_t *layer, double error);
 
 /**
  * @brief Finalise layer statistics (compute mean and std).
- * 
+ *
  * @param layer   Layer comparison to finalise.
  *
  * @traceability SRS-004-VERIFY FR-VER-05
@@ -214,7 +214,7 @@ void cq_verify_layer_finalize(cq_layer_comparison_t *layer);
 
 /**
  * @brief Update total (end-to-end) statistics with a new error sample.
- * 
+ *
  * @param report  Verification report to update.
  * @param error   Measured end-to-end error for this sample.
  *
@@ -224,7 +224,7 @@ void cq_verify_total_update(cq_verification_report_t *report, double error);
 
 /**
  * @brief Finalise total statistics (compute mean and std).
- * 
+ *
  * @param report  Verification report to finalise.
  *
  * @traceability SRS-004-VERIFY FR-VER-05
@@ -237,7 +237,7 @@ void cq_verify_total_finalize(cq_verification_report_t *report);
 
 /**
  * @brief Initialise a layer comparison structure.
- * 
+ *
  * @param layer       Layer comparison to initialise.
  * @param layer_index Index of the layer.
  * @param bound       Theoretical error bound (from analysis).
@@ -248,7 +248,7 @@ void cq_layer_comparison_init(cq_layer_comparison_t *layer,
 
 /**
  * @brief Initialise a verification report structure.
- * 
+ *
  * @param report      Report to initialise.
  * @param layer_count Number of layers.
  * @param layers      Pre-allocated array of layer comparisons.
@@ -265,7 +265,7 @@ void cq_verification_report_init(cq_verification_report_t *report,
 
 /**
  * @brief Generate verification digest for certificate.
- * 
+ *
  * @param report  Completed verification report.
  * @param digest  Output: Verification digest (fixed-size).
  * @return        0 on success, negative error code on failure.

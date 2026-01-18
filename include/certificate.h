@@ -46,7 +46,7 @@ extern "C" {
 
 /**
  * @brief Certificate for quantized model.
- * 
+ *
  * Serialised proof object with Merkle-like hash chain.
  * All hashes of previous sections are included in final root.
  * Fixed-size structure (360 bytes) for deterministic handling.
@@ -98,7 +98,7 @@ typedef struct {
 
 /**
  * @brief Certificate builder context.
- * 
+ *
  * Accumulates inputs before final certificate generation.
  */
 typedef struct {

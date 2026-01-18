@@ -78,10 +78,10 @@ Where:
 cq_fixed16_t cq_quantize_q16(float w_fp, cq_fault_flags_t *faults) {
     // Scale to fixed-point domain
     double scaled = (double)w_fp * (double)(1 << 16);
-    
+
     // Round to nearest even
     double rounded = round(scaled);  // C99 round() uses RNE
-    
+
     // Clamp to representable range
     if (rounded > (double)INT32_MAX) {
         faults->overflow = 1;
@@ -91,7 +91,7 @@ cq_fixed16_t cq_quantize_q16(float w_fp, cq_fault_flags_t *faults) {
         faults->underflow = 1;
         return INT32_MIN;
     }
-    
+
     return (cq_fixed16_t)rounded;
 }
 ```
@@ -159,14 +159,14 @@ bias.scale_exp == weight.scale_exp + input.scale_exp
 ```c
 int cq_verify_dyadic(const cq_layer_header_t *hdr,
                      cq_fault_flags_t *faults) {
-    int expected_bias_exp = hdr->weight_spec.scale_exp + 
+    int expected_bias_exp = hdr->weight_spec.scale_exp +
                             hdr->input_spec.scale_exp;
-    
+
     if (hdr->bias_spec.scale_exp != expected_bias_exp) {
         hdr->dyadic_valid = false;
         return CQ_ERROR_DYADIC_VIOLATION;
     }
-    
+
     hdr->dyadic_valid = true;
     return 0;
 }
@@ -208,27 +208,27 @@ int cq_fold_batchnorm(const float *W, const float *b,
                       cq_fault_flags_t *faults) {
     // Hash original BN parameters
     cq_sha256_bn_params(bn, record->original_bn_hash);
-    
+
     // Compute folding factor (FP64 for precision)
     double inv_std = 1.0 / sqrt((double)bn->var + (double)bn->epsilon);
     double scale = (double)bn->gamma * inv_std;
-    
+
     // Fold weights: W' = W × scale
     for (size_t i = 0; i < weight_count; i++) {
         W_folded[i] = (float)((double)W[i] * scale);
     }
-    
+
     // Fold bias: b' = (b - μ) × scale + β
     for (size_t i = 0; i < bias_count; i++) {
-        double folded = ((double)b[i] - (double)bn->mean[i]) * scale + 
+        double folded = ((double)b[i] - (double)bn->mean[i]) * scale +
                         (double)bn->beta[i];
         b_folded[i] = (float)folded;
     }
-    
+
     // Hash folded weights
     cq_sha256_weights(W_folded, b_folded, record->folded_weights_hash);
     record->folding_occurred = true;
-    
+
     return 0;
 }
 ```

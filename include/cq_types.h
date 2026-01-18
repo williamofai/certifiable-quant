@@ -124,7 +124,7 @@ static inline void cq_fault_clear(cq_fault_flags_t *f) {
     *((uint32_t *)f) = 0;
 }
 
-static inline void cq_fault_merge(cq_fault_flags_t *dst, 
+static inline void cq_fault_merge(cq_fault_flags_t *dst,
                                    const cq_fault_flags_t *src) {
     *((uint32_t *)dst) |= *((uint32_t *)src);
 }
