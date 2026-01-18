@@ -1,0 +1,25 @@
+# Build artifacts
+build/
+cmake-build-*/
+*.o
+*.a
+*.so
+*.dylib
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Test outputs
+Testing/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated
+*.generated.*
