@@ -259,14 +259,21 @@ This is the first ML quantization tool designed from the ground up for safety-cr
 
 Want to understand the engineering principles behind certifiable-quant?
 
-**Formal Methods:**
-- [Bit-Perfect Reproducibility: Why It Matters and How to Prove It](https://speytech.com/insights/bit-perfect-reproducibility/)
+**Fixed-Point Arithmetic:**
+- [Fixed-Point Neural Networks: The Math Behind Q16.16](https://speytech.com/insights/fixed-point-neural-networks/)
 - [From Proofs to Code: Mathematical Transcription in C](https://speytech.com/insights/mathematical-proofs-to-code/)
-- [Cryptographic Execution Tracing and Evidentiary Integrity](https://speytech.com/insights/cryptographic-proof-execution/)
+- [Closure, Totality, and the Algebra of Safe Systems](https://speytech.com/insights/closure-totality-algebra/)
 
-**Safety Engineering:**
+**Determinism & Reproducibility:**
+- [Bit-Perfect Reproducibility: Why It Matters and How to Prove It](https://speytech.com/insights/bit-perfect-reproducibility/)
+- [The ML Non-Determinism Problem](https://speytech.com/insights/ml-nondeterminism-problem/)
+
+**Safety-Critical Foundations:**
 - [The Real Cost of Dynamic Memory in Safety-Critical Systems](https://speytech.com/insights/dynamic-memory-safety-critical/)
-- [Why Your ML Model Gives Different Results Every Tuesday](https://speytech.com/insights/ml-nondeterminism-problem/)
+
+**Production ML Architecture:**
+- [A Complete Deterministic ML Pipeline for Safety-Critical Systems](https://speytech.com/ai-architecture/deterministic-ml-pipeline/)
+- [The Floating-Point Trap](https://speytech.com/ai-architecture/floating-point-danger/)
 
 ## Compliance Support
 
