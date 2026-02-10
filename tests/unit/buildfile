@@ -1,0 +1,18 @@
+tests = exe{test_analyze test_bit_identity test_calibrate test_certificate test_convert test_primitives test_verify}
+
+exe{test_analyze}: c{test_analyze} ../../src/liba{certifiable_quant}
+exe{test_bit_identity}: c{test_bit_identity} ../../src/liba{certifiable_quant}
+exe{test_calibrate}: c{test_calibrate} ../../src/liba{certifiable_quant}
+exe{test_certificate}: c{test_certificate} ../../src/liba{certifiable_quant}
+exe{test_convert}: c{test_convert} ../../src/liba{certifiable_quant}
+exe{test_primitives}: c{test_primitives} ../../src/liba{certifiable_quant}
+exe{test_verify}: c{test_verify} ../../src/liba{certifiable_quant}
+
+$tests:
+{
+  c.coptions += -UNDEBUG
+  c.libs += -lm
+  test = true
+}
+
+./: $tests
