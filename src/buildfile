@@ -1,0 +1,9 @@
+liba{certifiable_quant}: \
+  c{**.c} \
+  h{../include/**.h}
+{
+  export = true
+  install = true
+}
+
+./: liba{certifiable_quant}
